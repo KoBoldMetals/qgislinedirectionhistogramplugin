@@ -713,7 +713,7 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
                     # Use a red tone according to the strength
                     colourintensity = 255 - (strength * 255)
                     trendcolour = QColor.fromHsv(basecolourhue,
-                                                 strength * 255, 255)
+                                                 int(strength * 255), 255)
                     sector.setBrush(QBrush(trendcolour))
                     myPen = QPen(QPen(trendcolour))
                     myPen.setWidth(1)

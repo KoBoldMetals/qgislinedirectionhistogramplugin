@@ -539,7 +539,7 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
             else:
                 self.showError(self.tr('No histogram created') + '!')
         # Update the user interface
-        self.progressBar.setValue(0.0)
+        self.progressBar.setValue(0)
         self.button_box.button(QDialogButtonBox.Ok).setEnabled(True)
         self.button_box.button(QDialogButtonBox.Close).setEnabled(True)
         self.button_box.button(QDialogButtonBox.Cancel).setEnabled(False)

@@ -900,7 +900,7 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
         self.bins = self.binsSpinBox.value()
         if self.bins < 2:
             self.bins = 2
-            self.binsSpinBox.setValue(bins)
+            self.binsSpinBox.setValue(self.bins)
         maxoffsetangle = int(360 / self.bins)
         if self.directionneutral:
             maxoffsetangle = int(maxoffsetangle / 2)

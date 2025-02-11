@@ -1090,13 +1090,13 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
         savename = location
         settings = QSettings()
         key = '/UI/lastShapefileDir'
-        if not isinstance(savename, basestring):
+        if not isinstance(savename, str):
             outDir = settings.value(key)
             filter = 'SVG (*.svg)'
             savename, _filter = QFileDialog.getSaveFileName(self,
                                                             "Save to SVG",
                                                             outDir, filter)
-            savename = unicode(savename)
+            savename = str(savename)
         svgGen = QSvgGenerator()
         svgGen.setFileName(savename)
         svgGen.setSize(QSize(200, 200))
@@ -1142,7 +1142,7 @@ def findTileDialog(parent):
         # filter = 'Comma Separated Value (*.csv)'
         outFilePath = QFileDialog.getExistingDirectory(parent,
                        parent.tr('Directory for SVGs'), outDir)
-        outFilePath = unicode(outFilePath)
+        outFilePath = str(outFilePath)
         if outFilePath:
             outDir = os.path.dirname(outFilePath)
             settings.setValue(key, outDir)

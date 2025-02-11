@@ -30,7 +30,7 @@ class Worker(QtCore.QObject):
     length and the number of line segments in the bin.
     '''
     # Define the signals used to communicate
-    progress = QtCore.pyqtSignal(float)  # For reporting progress
+    progress = QtCore.pyqtSignal(int)  # For reporting progress
     status = QtCore.pyqtSignal(str)
     error = QtCore.pyqtSignal(str)
     # Signal for sending over the result:
@@ -294,7 +294,7 @@ class Worker(QtCore.QObject):
         if self.increment == 0 or self.processed % self.increment == 0:
             percentage_new = (self.processed * 100) / self.feature_count
             if percentage_new > self.percentage:
-                self.percentage = percentage_new
+                self.percentage = int(percentage_new)
                 self.progress.emit(self.percentage)
 
     def kill(self):

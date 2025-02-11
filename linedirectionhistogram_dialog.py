@@ -642,9 +642,9 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
             size = height
         padding = 3
         maxlength = size / 2.0 - padding * 2
-        center = QPoint(left + width / 2.0, top + height / 2.0)
+        center = QPointF(left + width / 2.0, top + height / 2.0)
         # The scene geomatry of the center point
-        start = QPointF(self.histogramGraphicsView.mapToScene(center))
+        start = QPointF(self.histogramGraphicsView.transform().map(center))
         # Create some concentric rings as background:
         if self.drawCirclesCB.isChecked():
           for i in range(self.NUMBEROFRINGS):
@@ -928,8 +928,8 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
             size = height
         padding = 3.0
         maxlength = size / 2.0 - padding
-        center = QPoint(left + width / 2.0, top + height / 2.0)
-        start = QPointF(self.setupGraphicsView.mapToScene(center))
+        center = QPointF(left + width / 2.0, top + height / 2.0)
+        start = QPointF(self.setupGraphicsView.transform().map(center))
         # Create some concentric rings:
         setuprings = self.NUMBEROFRINGS // 2
         for i in range(setuprings):
@@ -947,13 +947,13 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
             if self.directionneutral:
                 angle = 90.0 - i * 180.0 / self.bins - self.offsetangle
             directedline = QLineF.fromPolar(linelength, angle)
-            topt = center + QPoint(directedline.x2(),
+            topt = center + QPointF(directedline.x2(),
                                    directedline.y2())
-            end = QPointF(self.setupGraphicsView.mapToScene(topt))
+            end = QPointF(self.setupGraphicsView.transform().map(center))
             if self.directionneutral:
-                otherpt = center - QPoint(directedline.x2(),
+                otherpt = center - QPointF(directedline.x2(),
                                           directedline.y2())
-                mirrorpt = QPointF(self.setupGraphicsView.mapToScene(otherpt))
+                mirrorpt = QPointF(self.setupGraphicsView.transform().map(center))
                 self.setupScene.addItem(QGraphicsLineItem(
                                          QLineF(mirrorpt, end)))
             else:

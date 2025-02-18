@@ -1,18 +1,19 @@
 [general]
 name=Line direction histogram
-qgisMinimumVersion=2.99
+qgisMinimumVersion=3.36
 qgisMaximumVersion=3.98
 description=Create a histogram (rose diagram) of line directions
-about=Visualises the distribution of line segment directions as a rose diagram (weighted using the line segment lengths). Can save the rose diagram as CSV, PDF or SVG.
-version=3.1
-author=Håvard Tveite, NMBU
-email=havard.tveite@nmbu.no
+about=Visualises the distribution of line segment directions as a rose diagram (weighted using the line segment lengths). Can save the rose diagram as CSV, PDF or SVG. Tested with QGIS 3.40.1 on Mac and PC
+version=3.2
+author=Håvard Tveite, NMBU, Updated for use in QGIS 3.X by Matt W @ KoBold Metals as Håvard passed away several years ago
 
 # End of mandatory metadata
 
 # Optional items:
 # Uncomment the following line and add your changelog:
-changelog=3.1
+changelog=3.2
+    -- Updated float/int issues with QPoint and QProgressBar to work with QGIS version 3.40
+    3.1
     -- Fixed issue with geometry conversion for tiling (#27)
     -- Added possibility to specify the colour for the direction trend (#28)
     3.0.1

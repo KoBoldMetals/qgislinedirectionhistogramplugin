@@ -539,7 +539,7 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
             else:
                 self.showError(self.tr('No histogram created') + '!')
         # Update the user interface
-        self.progressBar.setValue(0.0)
+        self.progressBar.setValue(0)
         self.button_box.button(QDialogButtonBox.Ok).setEnabled(True)
         self.button_box.button(QDialogButtonBox.Close).setEnabled(True)
         self.button_box.button(QDialogButtonBox.Cancel).setEnabled(False)
@@ -642,9 +642,9 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
             size = height
         padding = 3
         maxlength = size / 2.0 - padding * 2
-        center = QPoint(left + width / 2.0, top + height / 2.0)
+        center = QPointF(left + width / 2.0, top + height / 2.0)
         # The scene geomatry of the center point
-        start = QPointF(self.histogramGraphicsView.mapToScene(center))
+        start = QPointF(self.histogramGraphicsView.transform().map(center))
         # Create some concentric rings as background:
         if self.drawCirclesCB.isChecked():
           for i in range(self.NUMBEROFRINGS):
@@ -713,7 +713,7 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
                     # Use a red tone according to the strength
                     colourintensity = 255 - (strength * 255)
                     trendcolour = QColor.fromHsv(basecolourhue,
-                                                 strength * 255, 255)
+                                                 int(strength * 255), 255)
                     sector.setBrush(QBrush(trendcolour))
                     myPen = QPen(QPen(trendcolour))
                     myPen.setWidth(1)
@@ -900,7 +900,7 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
         self.bins = self.binsSpinBox.value()
         if self.bins < 2:
             self.bins = 2
-            self.binsSpinBox.setValue(bins)
+            self.binsSpinBox.setValue(self.bins)
         maxoffsetangle = int(360 / self.bins)
         if self.directionneutral:
             maxoffsetangle = int(maxoffsetangle / 2)
@@ -928,8 +928,8 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
             size = height
         padding = 3.0
         maxlength = size / 2.0 - padding
-        center = QPoint(left + width / 2.0, top + height / 2.0)
-        start = QPointF(self.setupGraphicsView.mapToScene(center))
+        center = QPointF(left + width / 2.0, top + height / 2.0)
+        start = QPointF(self.setupGraphicsView.transform().map(center))
         # Create some concentric rings:
         setuprings = self.NUMBEROFRINGS // 2
         for i in range(setuprings):
@@ -947,13 +947,13 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
             if self.directionneutral:
                 angle = 90.0 - i * 180.0 / self.bins - self.offsetangle
             directedline = QLineF.fromPolar(linelength, angle)
-            topt = center + QPoint(directedline.x2(),
+            topt = center + QPointF(directedline.x2(),
                                    directedline.y2())
-            end = QPointF(self.setupGraphicsView.mapToScene(topt))
+            end = QPointF(self.setupGraphicsView.transform().map(center))
             if self.directionneutral:
-                otherpt = center - QPoint(directedline.x2(),
+                otherpt = center - QPointF(directedline.x2(),
                                           directedline.y2())
-                mirrorpt = QPointF(self.setupGraphicsView.mapToScene(otherpt))
+                mirrorpt = QPointF(self.setupGraphicsView.transform().map(center))
                 self.setupScene.addItem(QGraphicsLineItem(
                                          QLineF(mirrorpt, end)))
             else:
@@ -1090,13 +1090,13 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
         savename = location
         settings = QSettings()
         key = '/UI/lastShapefileDir'
-        if not isinstance(savename, basestring):
+        if not isinstance(savename, str):
             outDir = settings.value(key)
             filter = 'SVG (*.svg)'
             savename, _filter = QFileDialog.getSaveFileName(self,
                                                             "Save to SVG",
                                                             outDir, filter)
-            savename = unicode(savename)
+            savename = str(savename)
         svgGen = QSvgGenerator()
         svgGen.setFileName(savename)
         svgGen.setSize(QSize(200, 200))
@@ -1142,7 +1142,7 @@ def findTileDialog(parent):
         # filter = 'Comma Separated Value (*.csv)'
         outFilePath = QFileDialog.getExistingDirectory(parent,
                        parent.tr('Directory for SVGs'), outDir)
-        outFilePath = unicode(outFilePath)
+        outFilePath = str(outFilePath)
         if outFilePath:
             outDir = os.path.dirname(outFilePath)
             settings.setValue(key, outDir)

@@ -23,6 +23,9 @@ Updates to this plugin should now be done using PB Tool (https://g-sherman.githu
 5 - Use the plugin reloader plugin to bring the changes into the active environment without restarting QGIS (https://plugins.qgis.org/plugins/plugin_reloader/)
 6 - `pb_tool zip` output should be included with a release upon merge
 
+NOTE - `pb_tool.cfg` will not have changes recognized by git until you run `git update-index --no-assume-unchanged pb_tool.cfg` to allow
+users to alter things locally without accidentally pushing the change to others.
+
 ## Issues
 Please report issues through github, and include as much detail as possible about what you were doing, what the desired outcome was,
 and any error messages that may have appeared in the 'Log Messages' panel in QGIS during usage.

@@ -60,9 +60,6 @@ help/build/
 # PyBuilder
 target/
 
-#
-pb_tool.cfg
-
 # Backup files
 *~
 

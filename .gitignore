@@ -65,3 +65,6 @@ pb_tool.cfg
 
 # Backup files
 *~
+
+# Zip Build
+zip_build/

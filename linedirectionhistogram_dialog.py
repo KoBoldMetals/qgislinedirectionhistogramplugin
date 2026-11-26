@@ -45,8 +45,8 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtCore import QObject, QThread, QCoreApplication, QUrl
 # from qgis.PyQt.QtCore import SIGNAL
 from qgis.PyQt.QtCore import QPointF, QLineF, QRectF, QPoint, QSettings
-from qgis.PyQt.QtCore import QSizeF, QSize, QRect, Qt
-from qgis.PyQt.QtCore import QVariant
+from qgis.PyQt.QtCore import QSizeF, QSize, QRect, Qt, QMarginsF
+from qgis.PyQt.QtCore import QMetaType
 from qgis.PyQt.QtWidgets import QWidget
 from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
 from qgis.PyQt.QtWidgets import QFileDialog
@@ -55,7 +55,7 @@ from qgis.PyQt.QtWidgets import QGraphicsScene, QGraphicsView
 from qgis.PyQt.QtWidgets import QApplication
 from qgis.PyQt.QtGui import QBrush, QPen, QColor
 from qgis.PyQt.QtGui import QPainter, QImage, QPixmap
-from qgis.PyQt.QtGui import QDesktopServices
+from qgis.PyQt.QtGui import QDesktopServices, QPageSize, QPageLayout
 from qgis.PyQt.QtPrintSupport import QPrinter
 from qgis.PyQt.QtSvg import QSvgGenerator
 
@@ -108,9 +108,9 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
 
-        okButton = self.button_box.button(QDialogButtonBox.Ok)
+        okButton = self.button_box.button(QDialogButtonBox.StandardButton.Ok)
         okButton.setText(self.OK)
-        cancelButton = self.button_box.button(QDialogButtonBox.Cancel)
+        cancelButton = self.button_box.button(QDialogButtonBox.StandardButton.Cancel)
         cancelButton.setText(self.CANCEL)
         helpButton = self.helpButton
         helpButton.setText(self.HELP)
@@ -119,7 +119,7 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
         browseButtonCSV.setText(self.BROWSE)
         browseButtonTile = self.browseButtonTile
         browseButtonTile.setText(self.BROWSE)
-        closeButton = self.button_box.button(QDialogButtonBox.Close)
+        closeButton = self.button_box.button(QDialogButtonBox.StandardButton.Close)
         closeButton.setText(self.CLOSE)
 
         self.colorButton = self.colorB
@@ -141,9 +141,9 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
         logaritmicCBCh.connect(self.logaritmic)
         noAreaProportionalCBCh = self.proportionalAreaCheckBox.stateChanged
         noAreaProportionalCBCh.connect(self.proportionalArea)
-        binsSBCh = self.binsSpinBox.valueChanged[str]
+        binsSBCh = self.binsSpinBox.valueChanged
         binsSBCh.connect(self.updateBins)
-        offsetAngleSBCh = self.offsetAngleSpinBox.valueChanged[str]
+        offsetAngleSBCh = self.offsetAngleSpinBox.valueChanged
         offsetAngleSBCh.connect(self.updateBins)
         dirTrendCBCh = self.dirTrendCheckBox.stateChanged
         dirTrendCBCh.connect(self.trend)
@@ -240,11 +240,11 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
             self.roseLayer.setCrs(tilelayer.crs())
             # Add the ID field / attribute
             self.roseLayer.dataProvider().addAttributes(
-                       [QgsField(self.idfieldname, QVariant.Int)])
+                       [QgsField(self.idfieldname, QMetaType.Type.Int)])
             self.roseLayer.dataProvider().addAttributes(
-                       [QgsField("meandir", QVariant.Double)])
+                       [QgsField("meandir", QMetaType.Type.Double)])
             self.roseLayer.dataProvider().addAttributes(
-                       [QgsField("strength", QVariant.Double)])
+                       [QgsField("strength", QMetaType.Type.Double)])
             self.roseLayer.updateFields()
             # Add the IDs [1..number of "tiles"]
             id = 1
@@ -297,9 +297,9 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
         thread.start()
         self.thread = thread
         self.worker = worker
-        self.button_box.button(QDialogButtonBox.Ok).setEnabled(False)
-        self.button_box.button(QDialogButtonBox.Close).setEnabled(False)
-        self.button_box.button(QDialogButtonBox.Cancel).setEnabled(True)
+        self.button_box.button(QDialogButtonBox.StandardButton.Ok).setEnabled(False)
+        self.button_box.button(QDialogButtonBox.StandardButton.Close).setEnabled(False)
+        self.button_box.button(QDialogButtonBox.StandardButton.Cancel).setEnabled(True)
         self.saveAsPDFButton.setEnabled(False)
         self.saveAsSVGButton.setEnabled(False)
         self.copyToClipboardButton.setEnabled(False)
@@ -540,9 +540,9 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
                 self.showError(self.tr('No histogram created') + '!')
         # Update the user interface
         self.progressBar.setValue(0)
-        self.button_box.button(QDialogButtonBox.Ok).setEnabled(True)
-        self.button_box.button(QDialogButtonBox.Close).setEnabled(True)
-        self.button_box.button(QDialogButtonBox.Cancel).setEnabled(False)
+        self.button_box.button(QDialogButtonBox.StandardButton.Ok).setEnabled(True)
+        self.button_box.button(QDialogButtonBox.StandardButton.Close).setEnabled(True)
+        self.button_box.button(QDialogButtonBox.StandardButton.Cancel).setEnabled(False)
         self.saveAsPDFButton.setEnabled(True)
         self.saveAsSVGButton.setEnabled(True)
         self.copyToClipboardButton.setEnabled(True)
@@ -570,13 +570,13 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
         if self.worker is not None:
             QgsMessageLog.logMessage(self.tr('Killing worker'),
                                      self.LINEDIRECTIONHISTOGRAM,
-                                     Qgis.Info)
+                                     Qgis.MessageLevel.Info)
             self.worker.kill()
 
     def giveHelp(self):
         # self.showInfo('Giving help')
         QDesktopServices.openUrl(QUrl.fromLocalFile(
-                         self.plugin_dir + "/help/html/index.html"))
+                         os.path.join(self.plugin_dir, "help", "index.html")))
         # showPluginHelp(None, "help/html/index")
     # end of giveHelp
 
@@ -776,7 +776,7 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
                                         maxlength)
             myPen = QPen(self.meanvectorcolour)
             myPen.setWidth(5)
-            myPen.setCapStyle(Qt.FlatCap)
+            myPen.setCapStyle(Qt.PenCapStyle.FlatCap)
             dirLine.setPen(myPen)
             ptcircle.setPen(QPen(self.meanvectorcolour))
             ptcircle.setBrush(QBrush(self.meanvectorcolour))
@@ -949,11 +949,11 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
             directedline = QLineF.fromPolar(linelength, angle)
             topt = center + QPointF(directedline.x2(),
                                    directedline.y2())
-            end = QPointF(self.setupGraphicsView.transform().map(center))
+            end = QPointF(self.setupGraphicsView.transform().map(topt))
             if self.directionneutral:
                 otherpt = center - QPointF(directedline.x2(),
                                           directedline.y2())
-                mirrorpt = QPointF(self.setupGraphicsView.transform().map(center))
+                mirrorpt = QPointF(self.setupGraphicsView.transform().map(otherpt))
                 self.setupScene.addItem(QGraphicsLineItem(
                                          QLineF(mirrorpt, end)))
             else:
@@ -1001,7 +1001,7 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
         #                                     duration=3)
         QgsMessageLog.logMessage('Error: ' + text,
                                  self.LINEDIRECTIONHISTOGRAM,
-                                 Qgis.Critical)
+                                 Qgis.MessageLevel.Critical)
 
     def showWarning(self, text):
         """Show a warning."""
@@ -1010,7 +1010,7 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
         #                                     duration=2)
         QgsMessageLog.logMessage('Warning: ' + text,
                                  self.LINEDIRECTIONHISTOGRAM,
-                                 Qgis.Warning)
+                                 Qgis.MessageLevel.Warning)
 
     def showInfo(self, text):
         """Show info."""
@@ -1019,7 +1019,7 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
         #                                     duration=2)
         QgsMessageLog.logMessage('Info: ' + text,
                                  self.LINEDIRECTIONHISTOGRAM,
-                                 Qgis.Info)
+                                 Qgis.MessageLevel.Info)
 
     # Implement the accept method to avoid exiting the dialog when
     # starting the work
@@ -1071,19 +1071,20 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
         filter = 'PDF (*.pdf)'
         savename, _filter = QFileDialog.getSaveFileName(self, "Save File",
                                                         outDir, filter)
-        savename = unicode(savename)
-        printer = QPrinter(QPrinter.HighResolution)
-        printer.setPaperSize(QSizeF(100, 100), QPrinter.Millimeter)
-        printer.setPageMargins(0, 0, 0, 0, QPrinter.Millimeter)
-        printer.setOutputFormat(QPrinter.PdfFormat)
+        savename = str(savename)
+        if not savename:
+            return
+        printer = QPrinter(QPrinter.PrinterMode.HighResolution)
+        printer.setPageSize(QPageSize(QSizeF(100, 100), QPageSize.Unit.Millimeter))
+        printer.setPageMargins(QMarginsF(0, 0, 0, 0), QPageLayout.Unit.Millimeter)
+        printer.setOutputFormat(QPrinter.OutputFormat.PdfFormat)
         printer.setOutputFileName(savename)
         p = QPainter(printer)
         self.histscene.render(p)
         p.end()
 
-        if savename:
-            outDir = os.path.dirname(savename)
-            settings.setValue(key, outDir)
+        outDir = os.path.dirname(savename)
+        settings.setValue(key, outDir)
 
     # Save to SVG
     def saveAsSVG(self, location=None):
@@ -1097,6 +1098,8 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
                                                             "Save to SVG",
                                                             outDir, filter)
             savename = str(savename)
+        if not savename:
+            return
         svgGen = QSvgGenerator()
         svgGen.setFileName(savename)
         svgGen.setSize(QSize(200, 200))
@@ -1105,14 +1108,12 @@ class linedirectionhistogramDialog(QDialog, FORM_CLASS):
         self.histscene.render(painter)
         painter.end()
 
-        if savename:
-            outDir = os.path.dirname(savename)
-            settings.setValue(key, outDir)
+        outDir = os.path.dirname(savename)
+        settings.setValue(key, outDir)
 
     def copyToClipboard(self):
-        QApplication.clipboard().setImage(QImage(
-                        QWidget.grab(QGraphicsView(self.histscene))))
-#                        QPixmap.grabWidget(QGraphicsView(self.histscene))))
+        QApplication.clipboard().setImage(
+            self.histogramGraphicsView.grab().toImage())
 
 
 def saveCSVDialog(parent):
@@ -1123,7 +1124,7 @@ def saveCSVDialog(parent):
         filter = 'CSV (*.csv)'
         outFilePath, _filter = QFileDialog.getSaveFileName(parent,
                        parent.tr('Output CSV file'), outDir, filter)
-        outFilePath = unicode(outFilePath)
+        outFilePath = str(outFilePath)
         # parent.showInfo("outfilepath: " + outFilePath)
         if outFilePath:
             root, ext = os.path.splitext(outFilePath)

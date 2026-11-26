@@ -4,10 +4,8 @@ from math import sqrt
 # from PyQt4.QtCore import QCoreApplication
 from qgis.PyQt import QtCore
 from qgis.PyQt.QtCore import QCoreApplication
-# from qgis.PyQt.QtCore import QVariant
-from qgis.core import QgsWkbTypes
-from qgis.core import QgsVectorLayer
-from qgis.core import QgsGeometry, QgsPolygon
+from qgis.core import Qgis
+from qgis.core import QgsGeometry
 
 # Angles:
 # Real world angles are measured clockwise from the 12 o'clock
@@ -92,8 +90,8 @@ class Worker(QtCore.QObject):
                 return
             # Get and check the geometry type of the input layer
             geometryType = self.inputvectorlayer.geometryType()
-            if not (geometryType == QgsWkbTypes.LineGeometry or
-                    geometryType == QgsWkbTypes.PolygonGeometry):
+            if not (geometryType == Qgis.GeometryType.Line or
+                    geometryType == Qgis.GeometryType.Polygon):
                 self.error.emit('Only line and polygon layers are supported!')
                 self.finished.emit(False, None)
                 return
@@ -149,7 +147,7 @@ class Worker(QtCore.QObject):
                 # handle MultiPolylines and Polygons
                 inputlines = []
                 geom = feat.geometry()  # QgsGeometry
-                if geometryType == QgsWkbTypes.LineGeometry:
+                if geometryType == Qgis.GeometryType.Line:
                     # Lines!
                     if geom.isMultipart():
                         theparts = geom.constParts()
@@ -163,7 +161,7 @@ class Worker(QtCore.QObject):
                         inputlines.append(geom)
                 # There are only two possibilites for geometry type, so
                 # this elif: could be replaced with an else:
-                elif geometryType == QgsWkbTypes.PolygonGeometry:
+                elif geometryType == Qgis.GeometryType.Polygon:
                     # Polygons!
                     # We use a list of polygon geometries to be able to
                     # handle MultiPolygons
@@ -276,7 +274,7 @@ class Worker(QtCore.QObject):
                   j = j + 1  # Next tile
                 self.calculate_progress()
         except Exception as e:
-            self.status.emit("Exception occurred - " + str())
+            self.status.emit("Exception occurred - " + str(e))
             self.error.emit(str(e))
             self.finished.emit(False, None)
         else:

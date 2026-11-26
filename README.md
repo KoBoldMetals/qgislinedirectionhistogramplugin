@@ -4,10 +4,10 @@ directions as a rose diagram (weighted using the line segment lengths). Save the
 
 Created by Håvard Tveite, who passed away several years ago. Updated for use in modern QGIS versions by KoBold Metals.
 
-Tested with QGIS 3.40.1 on Mac and PC, but 3.36 should work too
+Tested with QGIS 4.2.3 (PyQt6 / Qt 6) and QGIS 3.40.1 (3.36+ should work as well).
 
 ## Users
-You can install the Zip file included with the 3.2 release of this git repository. Download it and open QGIS
+You can install the Zip file included with the latest release of this git repository. Download it and open QGIS
 
 1. Access the Plugins menu -> Manage and Install Plugins
 2. On the left side, click 'Install From Zip'

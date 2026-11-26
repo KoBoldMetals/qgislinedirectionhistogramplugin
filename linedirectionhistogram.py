@@ -21,14 +21,12 @@
  ***************************************************************************/
 """
 import os.path
-from qgis.core import QgsProject, QgsMapLayer, QgsWkbTypes
+from qgis.core import QgsProject, Qgis
 from qgis.PyQt.QtCore import QSettings, QCoreApplication
 from qgis.PyQt.QtCore import QTranslator, qVersion
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction, QMessageBox
+from qgis.PyQt.QtGui import QIcon, QAction
+from qgis.PyQt.QtWidgets import QMessageBox
 
-# Initialize Qt resources from file resources.py
-from .resources import *
 # Import the code for the dialog
 from .linedirectionhistogram_dialog import linedirectionhistogramDialog
 
@@ -51,7 +49,7 @@ class linedirectionhistogram:
         # initialize the plugin directory
         pluginPath = os.path.dirname(__file__)
         # initialize the locale using the QGIS locale
-        locale = QSettings().value('locale/userLocale')[0:2]
+        locale = (QSettings().value('locale/userLocale') or 'en')[0:2]
         locale_path = os.path.join(
             pluginPath,
             'i18n',
@@ -126,7 +124,7 @@ class linedirectionhistogram:
         layers = QgsProject.instance().mapLayers()
         layerslist = []
         for id in layers.keys():
-            if layers[id].type() == QgsMapLayer.VectorLayer:
+            if layers[id].type() == Qgis.LayerType.Vector:
                 if not layers[id].isValid():
                     QMessageBox.information(None,
                         self.tr('Information'),
@@ -139,16 +137,16 @@ class linedirectionhistogram:
         self.dlg.InputLayer.clear()
         for layerdescription in layerslist:
             if (layers[layerdescription[1]].geometryType() ==
-                  QgsWkbTypes.LineGeometry or
+                  Qgis.GeometryType.Line or
                   layers[layerdescription[1]].geometryType() ==
-                  QgsWkbTypes.PolygonGeometry):
+                  Qgis.GeometryType.Polygon):
                 self.dlg.InputLayer.addItem(layerdescription[0],
                                             layerdescription[1])
         # Add the layers to the tiling layer combobox
         self.dlg.TilingLayer.clear()
         for layerdescription in layerslist:
             if (layers[layerdescription[1]].geometryType() ==
-                  QgsWkbTypes.PolygonGeometry):
+                  Qgis.GeometryType.Polygon):
                 self.dlg.TilingLayer.addItem(layerdescription[0],
                                              layerdescription[1])
         # show the dialog
